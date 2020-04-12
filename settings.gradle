@@ -1,0 +1,2 @@
+include ':app', ':mylibrary', ':mylibrary2'
+rootProject.name='Toby'

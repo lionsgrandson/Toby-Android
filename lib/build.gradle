@@ -1,0 +1,11 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar *.class *.java'] )
+    implementation fileTree(dir: 'C:\\Users\\Moshe Schwartzberg\\Downloads\\WolframAlphaJavaLibrary\\SampleProgram', include: ['*.aar', '*.jar'], exclude: [])
+    implementation fileTree(dir: 'C:\\Users\\Moshe Schwartzberg\\Downloads\\WolframAlphaJavaLibrary', include: ['*.aar', '*.jar'], exclude: [])
+    implementation fileTree(dir: 'C:\\Users\\Moshe Schwartzberg\\Downloads\\WolframAlphaJavaLibrary\\Source', include: ['*.aar', '*.jar', '*.class', '*.java'], exclude: [])
+    implementation files('Downloads\\httpcomponents-client-4.5.10.jar')}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
