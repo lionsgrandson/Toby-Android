@@ -3,6 +3,7 @@ package com.assistant.toby;
 import android.content.Context;
 import android.content.Intent;
 import android.inputmethodservice.Keyboard;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.storage.StorageManager;
 import android.speech.RecognitionListener;
@@ -28,12 +29,14 @@ public class STT extends AppCompatActivity {
     int time;
     String voice;
     StopWatch stopWatch = new StopWatch();
-
+    Settings settings = new Settings();
+    boolean lOrS;
     public STT() {
 
     }
 
     public void listen(Context context, TextView textViewRes, TextView textViewReq, String print) {
+
 
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -135,9 +138,9 @@ public class STT extends AppCompatActivity {
     }
 
     public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq) {
-        boolean lOrS = false;
-        Settings settings = new Settings();
-        lOrS = settings.readFromFile(context);
+
+
+         lOrS = Boolean.parseBoolean(settings.readFromFile(context));
 
         if (voiceResults.contains("note") && voiceResults.contains("save")) {
             listen(context, textViewRes, textViewReq, "What is the note?");
@@ -186,17 +189,17 @@ public class STT extends AppCompatActivity {
                             "countdown - set countdown\n" +
                             "Local time- what time is it\n" +
                             "for any search just ask");
-        } else if (voiceResults.contains("settings") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
+        } else if (voiceResults.contains("setting") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
             if (voiceResults.toLowerCase().contains("long")) {
-                settings.writeToFile("answer: long", context);
+                settings.writeToFile("long", context);
                 textViewRes.setText("answer changed to long");
             } else if (voiceResults.toLowerCase().contains("short")) {
-                settings.writeToFile("answer: short", context);
+                settings.writeToFile("short", context);
                 textViewRes.setText("answer changed to short");
             } else {
                 textViewRes.setText("That's not an option in the settings");
             }
-            lOrS = settings.readFromFile(context);
+            lOrS = Boolean.parseBoolean(settings.readFromFile(context));
 //            textViewRes.setText(String.valueOf(lOrS));
 //            listen(context, textViewRes, textViewReq, "What do you want to change? \n long or short answer");
         } else {
@@ -204,7 +207,6 @@ public class STT extends AppCompatActivity {
                 Date currentTime = new Date();
                 textViewRes.setText(currentTime.toString() + "\nNote: this only works for you're local time.");
             } else {
-//                    textViewRes.setText(String.valueOf(lOrS));
                     AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, lOrS);
                     alphaAPI.run();
             }

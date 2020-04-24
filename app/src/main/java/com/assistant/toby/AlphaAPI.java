@@ -56,18 +56,17 @@ public class AlphaAPI implements Runnable {
 
     String STT;
     TextView textView;
-    boolean runOrNot;
+    boolean runOrNot ;
 
     public AlphaAPI(String STT, TextView textView, boolean runOrNot ) {
+        this.runOrNot = runOrNot;
         this.STT = STT;
         this.textView = textView;
-        this.runOrNot = runOrNot;
     }
 
     @Override
     public void run() {
         try {
-
             // Use "pi" as the default query, or caller can supply it as the lone command-line argument.
             String input = STT;
 
@@ -120,7 +119,7 @@ public class AlphaAPI implements Runnable {
                                     if (element instanceof WAPlainText) {
                                         if (runOrNot) { // long answer means true
                                             setTextStr += "\n" + ((WAPlainText) element).getText();
-                                        } else { // short answer
+                                        } else  { // short answer
                                             setTextStr += ((WAPlainText) element).getText() + "\n";
                                             setTextSpl = setTextStr.split("\n");
                                             System.out.println("");
