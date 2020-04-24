@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.os.storage.StorageManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -13,6 +14,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -89,7 +93,7 @@ public class STT extends AppCompatActivity {
                 er[6] = "Can't understand what you said";
                 er[7] = "you've already started the Microphone, wait a minute and try again";
                 er[8] = "Don't have the Permissions for that";
-                textViewRes.setText( er[error - 1]);
+                textViewRes.setText(er[error - 1]);
             }
 
             @Override
@@ -131,6 +135,10 @@ public class STT extends AppCompatActivity {
     }
 
     public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq) {
+        boolean lOrS = false;
+        Settings settings = new Settings();
+        lOrS = settings.readFromFile(context);
+
         if (voiceResults.contains("note") && voiceResults.contains("save")) {
             listen(context, textViewRes, textViewReq, "What is the note?");
             done = true;
@@ -153,12 +161,11 @@ public class STT extends AppCompatActivity {
 //                || voiceResults.contains("when")
 //                || voiceResults.contains("define")) {
 //            alphaAPISample.AlphaAPISample(textView, voiceResults);
-        }else if (voiceResults.contains("hi") || voiceResults.contains("Hi") ){
+        } else if (voiceResults.equalsIgnoreCase("Hello") || voiceResults.equalsIgnoreCase("Hi")) {
             textViewRes.setText("Hi, I am Toby, created on June of 2019. How can I help?");
-        }else if(voiceResults.contains("Who created you")||voiceResults.contains("who created you") ){
+        } else if (voiceResults.contains("Who created you") || voiceResults.contains("who created you")) {
             textViewRes.setText("I was ceated by Moshe Schwartzberg, as a summer project that then became a year long project");
-        }
-        else if (done) {
+        } else if (done) {
             Note note = new Note();
             note.writeToFile(voiceResults, context);
             textViewRes.setText("Your notes are:" + note.readFromFile(context));
@@ -179,13 +186,27 @@ public class STT extends AppCompatActivity {
                             "countdown - set countdown\n" +
                             "Local time- what time is it\n" +
                             "for any search just ask");
+        } else if (voiceResults.contains("settings") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
+            if (voiceResults.toLowerCase().contains("long")) {
+                settings.writeToFile("answer: long", context);
+                textViewRes.setText("answer changed to long");
+            } else if (voiceResults.toLowerCase().contains("short")) {
+                settings.writeToFile("answer: short", context);
+                textViewRes.setText("answer changed to short");
+            } else {
+                textViewRes.setText("That's not an option in the settings");
+            }
+            lOrS = settings.readFromFile(context);
+//            textViewRes.setText(String.valueOf(lOrS));
+//            listen(context, textViewRes, textViewReq, "What do you want to change? \n long or short answer");
         } else {
             if (voiceResults.contains("time")) {
                 Date currentTime = new Date();
                 textViewRes.setText(currentTime.toString() + "\nNote: this only works for you're local time.");
             } else {
-                AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes);
-                alphaAPI.run();
+//                    textViewRes.setText(String.valueOf(lOrS));
+                    AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, lOrS);
+                    alphaAPI.run();
             }
         }
     }

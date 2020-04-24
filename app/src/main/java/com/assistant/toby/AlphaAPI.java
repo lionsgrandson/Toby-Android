@@ -15,6 +15,7 @@ import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
 import com.wolfram.alpha.WASubpod;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /*
@@ -55,10 +56,12 @@ public class AlphaAPI implements Runnable {
 
     String STT;
     TextView textView;
+    boolean runOrNot;
 
-    public AlphaAPI(String STT, TextView textView) {
+    public AlphaAPI(String STT, TextView textView, boolean runOrNot ) {
         this.STT = STT;
         this.textView = textView;
+        this.runOrNot = runOrNot;
     }
 
     @Override
@@ -86,6 +89,9 @@ public class AlphaAPI implements Runnable {
             // Set properties of the query.
             query.setInput(input);
 
+            String setTextStr= "";
+            String[] setTextSpl = null;
+
             try {
                 // For educational purposes, print out the URL we are about to send:
                 System.out.println("Query URL:");
@@ -112,15 +118,24 @@ public class AlphaAPI implements Runnable {
                             for (WASubpod subpod : pod.getSubpods()) {
                                 for (Object element : subpod.getContents()) {
                                     if (element instanceof WAPlainText) {
-                                        textView.setText(((WAPlainText) element).getText()+"\n");
-                                        System.out.println("");
+                                        if (runOrNot) { // long answer means true
+                                            setTextStr += "\n" + ((WAPlainText) element).getText();
+                                        } else { // short answer
+                                            setTextStr += ((WAPlainText) element).getText() + "\n";
+                                            setTextSpl = setTextStr.split("\n");
+                                            System.out.println("");
+                                        }
                                     }
                                 }
                             }
                             System.out.println("");
                         }
                     }
-
+                    if(runOrNot) {
+                        textView.setText(setTextStr);
+                    }else {
+                        textView.setText(setTextSpl[0] + "\n" + setTextSpl[1]);
+                    }
                     // We ignored many other types of Wolfram|Alpha output, such as warnings, assumptions, etc.
                     // These can be obtained by methods of WAQueryResult or objects deeper in the hierarchy.
                 }
