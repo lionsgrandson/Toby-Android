@@ -149,7 +149,7 @@ public class STT extends Activity {
         } else if (voiceResults.contains("set") && voiceResults.contains("timer") || voiceResults.toLowerCase().contains("stopwatch")) {
             stpBtn.setVisibility(View.VISIBLE);
             StopWatch stopWatch = new StopWatch();
-            time = 3595;
+            time = 0;
             try {
 
                 Runnable runnable = new Runnable() {
