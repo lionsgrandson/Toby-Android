@@ -2,22 +2,14 @@ package com.assistant.toby;
 
 import android.content.Context;
 import android.content.Intent;
-import android.inputmethodservice.Keyboard;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.storage.StorageManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.BufferedReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -36,8 +28,6 @@ public class STT extends AppCompatActivity {
     }
 
     public void listen(Context context, TextView textViewRes, TextView textViewReq, String print) {
-
-
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -153,7 +143,7 @@ public class STT extends AppCompatActivity {
             alm = true;
         } else if (voiceResults.contains("set") && voiceResults.contains("timer")) {
             timer = true;
-        } else if (voiceResults.contains("countdown")) {
+        } else if (voiceResults.toLowerCase().contains("countdown") || voiceResults.toLowerCase().contains("stopwatch")) {
             listen(context, textViewRes, textViewReq, "How long should the stopwatch be? the seconds only, numbers only.");
             stopwatchB = true;
 //        } else if (voiceResults.contains("how")
@@ -176,7 +166,7 @@ public class STT extends AppCompatActivity {
         } else if (stopwatchB) {
             try {
                 time = Integer.parseInt(voiceResults);
-                stopWatch.setStopWatch(textViewRes, time);
+                stopWatch.setStopWatch(textViewRes, time, context);
                 stopwatchB = false;
             } catch (Exception e) {
                 textViewRes.setText("didn't work, please try again");
