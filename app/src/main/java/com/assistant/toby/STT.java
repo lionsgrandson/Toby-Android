@@ -189,17 +189,18 @@ public class STT extends AppCompatActivity {
                             "countdown - set countdown\n" +
                             "Local time- what time is it\n" +
                             "for any search just ask");
-        } else if (voiceResults.contains("setting") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
-            if (voiceResults.toLowerCase().contains("long")) {
-                settings.writeToFile("long", context);
-                textViewRes.setText("answer changed to long");
-            } else if (voiceResults.toLowerCase().contains("short")) {
-                settings.writeToFile("short", context);
-                textViewRes.setText("answer changed to short");
-            } else {
-                textViewRes.setText("That's not an option in the settings");
-            }
-            lOrS = Boolean.parseBoolean(settings.readFromFile(context));
+//        }
+//        else if (voiceResults.contains("setting") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
+//            if (voiceResults.toLowerCase().contains("long")) {
+//                settings.writeToFile("long", context);
+//                textViewRes.setText("answer changed to long");
+//            } else if (voiceResults.toLowerCase().contains("short")) {
+//                settings.writeToFile("short", context);
+//                textViewRes.setText("answer changed to short");
+//            } else {
+//                textViewRes.setText("That's not an option in the settings");
+//            }
+//            lOrS = Boolean.parseBoolean(settings.readFromFile(context));
 //            textViewRes.setText(String.valueOf(lOrS));
 //            listen(context, textViewRes, textViewReq, "What do you want to change? \n long or short answer");
         } else {
@@ -207,7 +208,7 @@ public class STT extends AppCompatActivity {
                 Date currentTime = new Date();
                 textViewRes.setText(currentTime.toString() + "\nNote: this only works for you're local time.");
             } else {
-                    AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, lOrS);
+                    AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes);
                     alphaAPI.run();
             }
         }

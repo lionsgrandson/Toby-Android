@@ -1,8 +1,10 @@
 package com.assistant.toby;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.MainThread;
@@ -56,13 +58,12 @@ public class AlphaAPI implements Runnable {
 
     String STT;
     TextView textView;
-    boolean runOrNot ;
-
-    public AlphaAPI(String STT, TextView textView, boolean runOrNot ) {
-        this.runOrNot = runOrNot;
+    boolean runOrNot;
+    public AlphaAPI(String STT, TextView textView) {
         this.STT = STT;
         this.textView = textView;
     }
+
 
     @Override
     public void run() {
@@ -88,7 +89,7 @@ public class AlphaAPI implements Runnable {
             // Set properties of the query.
             query.setInput(input);
 
-            String setTextStr= "";
+            String setTextStr = "";
             String[] setTextSpl = null;
 
             try {
@@ -117,24 +118,25 @@ public class AlphaAPI implements Runnable {
                             for (WASubpod subpod : pod.getSubpods()) {
                                 for (Object element : subpod.getContents()) {
                                     if (element instanceof WAPlainText) {
-                                        if (runOrNot) { // long answer means true
-                                            setTextStr += "\n" + ((WAPlainText) element).getText();
-                                        } else  { // short answer
                                             setTextStr += ((WAPlainText) element).getText() + "\n";
                                             setTextSpl = setTextStr.split("\n");
                                             System.out.println("");
-                                        }
                                     }
                                 }
                             }
                             System.out.println("");
                         }
                     }
-                    if(runOrNot) {
-                        textView.setText(setTextStr);
-                    }else {
-                        textView.setText(setTextSpl[0] + "\n" + setTextSpl[1]);
+                    textView.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        textView.setContextClickable(true);
+                        String finalSetTextStr = setTextStr;
+                        textView.setOnClickListener(v -> {
+                            textView.setText(finalSetTextStr);
+                        });
                     }
+
                     // We ignored many other types of Wolfram|Alpha output, such as warnings, assumptions, etc.
                     // These can be obtained by methods of WAQueryResult or objects deeper in the hierarchy.
                 }
