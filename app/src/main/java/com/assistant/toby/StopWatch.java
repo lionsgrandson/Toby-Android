@@ -2,37 +2,61 @@ package com.assistant.toby;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.MainThread;
+import androidx.fragment.app.FragmentManager;
 
-public class StopWatch  extends Activity {
-    public void setStopWatch(TextView textView, int time, Context context) {
 
-        new CountDownTimer(time * 1000, 1000) {
-            public void onTick(long millisUntilFinished) {
-                textView.setText("seconds remaining: " + millisUntilFinished / 1000);
+public class StopWatch  {
+
+    boolean clicked = false;
+
+    public void setStopWatch(TextView textView, Button stpBtn, Context context, Activity Activity) {
+
+        stpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clicked = true;
             }
+        });
 
-            public void onFinish() {
-                textView.setText("done!");
-                try {
-                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    // Vibrate for 500 milliseconds
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        //deprecated in API 26
-                        v.vibrate(1000);
+        int time = 0;
+        while (!clicked) {
 
+            try {
+
+//                changeTXT(time,textView);
+                textView.setText(time);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            textView.setText(e.getMessage());
+                        }
                     }
-                }catch (Exception e){
-                    textView.setText(e.getMessage());
-                }
+                }).start();
+                time++;
+            } catch (Exception e) {
+                textView.setText(e.getMessage());
             }
-        }.start();
+
+
+        }
+        stpBtn.setVisibility(View.INVISIBLE);
+    }
+    public void changeTXT(int time, TextView textView){
+
     }
 }
+

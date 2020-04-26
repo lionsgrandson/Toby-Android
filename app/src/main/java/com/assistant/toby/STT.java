@@ -1,33 +1,38 @@
 package com.assistant.toby;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-public class STT extends AppCompatActivity {
+public class STT extends Activity {
     boolean done = false;
     boolean alm = false;
     boolean timer = false;
     boolean stopwatchB = false;
     int time;
     String voice;
-    StopWatch stopWatch = new StopWatch();
+    CountDown countDown = new CountDown();
     Settings settings = new Settings();
     boolean lOrS;
+
+
     public STT() {
 
     }
 
-    public void listen(Context context, TextView textViewRes, TextView textViewReq, String print) {
+    public void listen(Context context, TextView textViewRes, TextView textViewReq, String print, Button stpBtn, Activity actvity) {
+
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -48,7 +53,7 @@ public class STT extends AppCompatActivity {
                     for (String match : voiceResults) {
                         System.out.println(match);
                     }
-                    heard(voiceResults.get(0), context, textViewRes, textViewReq);
+                    heard(voiceResults.get(0), context, textViewRes, textViewReq, stpBtn, actvity);
                     voice = voiceResults.get(0);
                     textViewReq.setText(voice);
 
@@ -127,45 +132,94 @@ public class STT extends AppCompatActivity {
         recognizer.startListening(intent);
     }
 
-    public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq) {
+    public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq, Button stpBtn, Activity activity) {
+        String[] voiceResultsSpl;
 
-
-         lOrS = Boolean.parseBoolean(settings.readFromFile(context));
+        lOrS = Boolean.parseBoolean(settings.readFromFile(context));
 
         if (voiceResults.contains("note") && voiceResults.contains("save")) {
-            listen(context, textViewRes, textViewReq, "What is the note?");
+            listen(context, textViewRes, textViewReq, "What is the note?", stpBtn, activity);
             done = true;
         } else if (voiceResults.contains("read") && voiceResults.contains("note")) {
             Note note = new Note();
             textViewRes.setText(note.readFromFile(context));
         } else if (voiceResults.contains("alarm") && voiceResults.contains("set")) {
-            listen(context, textViewRes, textViewReq, "What hour will the alarm be? only numbers.");
+            listen(context, textViewRes, textViewReq, "What hour will the alarm be? only numbers.", stpBtn, activity);
             alm = true;
-        } else if (voiceResults.contains("set") && voiceResults.contains("timer")) {
-            timer = true;
-        } else if (voiceResults.toLowerCase().contains("countdown") || voiceResults.toLowerCase().contains("stopwatch")) {
+        } else if (voiceResults.contains("set") && voiceResults.contains("timer") || voiceResults.toLowerCase().contains("stopwatch")) {
+            stpBtn.setVisibility(View.VISIBLE);
+            StopWatch stopWatch = new StopWatch();
+            time = 3595;
             try {
-                String[] voiceResultsSpl = voiceResults.split(" ");
-                for(int i = 0; i<=voiceResultsSpl.length; i++) {
-                    try {
-                        if(voiceResultsSpl[i].equalsIgnoreCase("one")){
-                            time = 1; // just in case it reads it as a string not an int
-                        }else {
-                            time = Integer.parseInt(voiceResultsSpl[i]);
+
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        while (time != -1) {
+                            time++;
+
+                            textViewRes.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(time>=60&&time<=3600){
+                                        int min =time/60;
+                                        textViewRes.setText("Minute " + (min) + ":"+ (time-(60*min)));
+                                    }else if(time>=3600) {
+                                        textViewRes.setText("stopped at one hour");
+                                    }else{
+                                        textViewRes.setText("Seconds " + time);
+                                    }
+                                }
+                            });
+                            try {
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+                                textViewRes.setText(e.getMessage());
+                            }
                         }
-                    }catch (Exception e ){
-                        continue;
                     }
+                };
+                Thread myThread = new Thread(runnable);
+                myThread.start();
+
+            stpBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    time = -1;
+                    stpBtn.setVisibility(View.INVISIBLE);
                 }
-                if(voiceResults.toLowerCase().contains("minute")){
-                    time *= 60; //if it's at minutes, then convert it to seconds (1 min = 60 sec)
-                }else if(voiceResults.toLowerCase().contains("hour")){
-                    time *= 3600; //converting from hours to seconds
+            });
+        }catch(Exception e){
+            textViewRes.setText(e.getMessage());
+        }
+//            stopWatch.setStopWatch(textViewRes, stpBtn,context, activity);
+    } else if(voiceResults.toLowerCase().
+
+    contains("countdown"))
+
+    {
+        try {
+            voiceResultsSpl = voiceResults.split(" ");
+            for (int i = 0; i <= voiceResultsSpl.length; i++) {
+                try {
+                    if (voiceResultsSpl[i].equalsIgnoreCase("one")) {
+                        time = 1; // just in case it reads it as a string not an int
+                    } else {
+                        time = Integer.parseInt(voiceResultsSpl[i]);
+                    }
+                } catch (Exception e) {
+                    continue;
                 }
-                stopWatch.setStopWatch(textViewRes, time, context);
-            } catch (Exception e) {
-                textViewRes.setText("didn't work, please try again");
             }
+            if (voiceResults.toLowerCase().contains("minute")) {
+                time *= 60; //if it's at minutes, then convert it to seconds (1 min = 60 sec)
+            } else if (voiceResults.toLowerCase().contains("hour")) {
+                time *= 3600; //converting from hours to seconds
+            }
+            countDown.setStopWatch(textViewRes, time, context);
+        } catch (Exception e) {
+            textViewRes.setText("didn't work, please try again");
+        }
 
 //        } else if (voiceResults.contains("how")
 //                || voiceResults.contains("what")
@@ -175,23 +229,31 @@ public class STT extends AppCompatActivity {
 //                || voiceResults.contains("when")
 //                || voiceResults.contains("define")) {
 //            alphaAPISample.AlphaAPISample(textView, voiceResults);
-        } else if (voiceResults.equalsIgnoreCase("Hello") || voiceResults.equalsIgnoreCase("Hi")) {
-            textViewRes.setText("Hi, I am Toby, created on June of 2019. How can I help?");
-        } else if (voiceResults.contains("Who created you") || voiceResults.contains("who created you")) {
-            textViewRes.setText("I was ceated by Moshe Schwartzberg, as a summer project that then became a year long project");
-        } else if (done) {
-            Note note = new Note();
-            note.writeToFile(voiceResults, context);
-            textViewRes.setText("Your notes are:" + note.readFromFile(context));
-            done = false;
-        } else if (voiceResults.contains("help") || voiceResults.contains("Help")) {
-            textViewRes.setText(
-                    "notes -read/save note\n" +
-                            "alarm - set alarm\n" +
-                            "timer - set timer\n" +
-                            "countdown / stopWatch - set stopwatch\n" +
-                            "Local time- what time is it\n" +
-                            "for any search just ask");
+    } else if(voiceResults.equalsIgnoreCase("Hello")||voiceResults.equalsIgnoreCase("Hi"))
+
+    {
+        textViewRes.setText("Hi, I am Toby, created on June of 2019. How can I help?");
+    } else if(voiceResults.contains("Who created you")||voiceResults.contains("who created you"))
+
+    {
+        textViewRes.setText("I was ceated by Moshe Schwartzberg, as a summer project that then became a year long project");
+    } else if(done)
+
+    {
+        Note note = new Note();
+        note.writeToFile(voiceResults, context);
+        textViewRes.setText("Your notes are:" + note.readFromFile(context));
+        done = false;
+    } else if(voiceResults.contains("help")||voiceResults.contains("Help"))
+
+    {
+        textViewRes.setText(
+                "notes -read/save note\n" +
+                        "alarm - set alarm\n" +
+                        "timer - set timer\n" +
+                        "countdown / stopWatch - set stopwatch\n" +
+                        "Local time- what time is it\n" +
+                        "for any search just ask");
 //        }
 //        else if (voiceResults.contains("setting") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
 //            if (voiceResults.toLowerCase().contains("long")) {
@@ -206,14 +268,16 @@ public class STT extends AppCompatActivity {
 //            lOrS = Boolean.parseBoolean(settings.readFromFile(context));
 //            textViewRes.setText(String.valueOf(lOrS));
 //            listen(context, textViewRes, textViewReq, "What do you want to change? \n long or short answer");
+    } else
+
+    {
+        if (voiceResults.contains("time")) {
+            Date currentTime = new Date();
+            textViewRes.setText(currentTime.toString() + "\nNote: this only works for you're local time.");
         } else {
-            if (voiceResults.contains("time")) {
-                Date currentTime = new Date();
-                textViewRes.setText(currentTime.toString() + "\nNote: this only works for you're local time.");
-            } else {
-                    AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes);
-                    alphaAPI.run();
-            }
+            AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes);
+            alphaAPI.run();
         }
     }
+}
 }

@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".AlphaAPI" />
+        <activity android:name=".StopWatch"/>
     </application>
 
 </manifest>
