@@ -144,8 +144,29 @@ public class STT extends AppCompatActivity {
         } else if (voiceResults.contains("set") && voiceResults.contains("timer")) {
             timer = true;
         } else if (voiceResults.toLowerCase().contains("countdown") || voiceResults.toLowerCase().contains("stopwatch")) {
-            listen(context, textViewRes, textViewReq, "How long should the stopwatch be? the seconds only, numbers only.");
-            stopwatchB = true;
+            try {
+                String[] voiceResultsSpl = voiceResults.split(" ");
+                for(int i = 0; i<=voiceResultsSpl.length; i++) {
+                    try {
+                        if(voiceResultsSpl[i].equalsIgnoreCase("one")){
+                            time = 1; // just in case it reads it as a string not an int
+                        }else {
+                            time = Integer.parseInt(voiceResultsSpl[i]);
+                        }
+                    }catch (Exception e ){
+                        continue;
+                    }
+                }
+                if(voiceResults.toLowerCase().contains("minute")){
+                    time *= 60; //if it's at minutes, then convert it to seconds (1 min = 60 sec)
+                }else if(voiceResults.toLowerCase().contains("hour")){
+                    time *= 3600; //converting from hours to seconds
+                }
+                stopWatch.setStopWatch(textViewRes, time, context);
+            } catch (Exception e) {
+                textViewRes.setText("didn't work, please try again");
+            }
+
 //        } else if (voiceResults.contains("how")
 //                || voiceResults.contains("what")
 //                || voiceResults.contains("why")
@@ -163,20 +184,12 @@ public class STT extends AppCompatActivity {
             note.writeToFile(voiceResults, context);
             textViewRes.setText("Your notes are:" + note.readFromFile(context));
             done = false;
-        } else if (stopwatchB) {
-            try {
-                time = Integer.parseInt(voiceResults);
-                stopWatch.setStopWatch(textViewRes, time, context);
-                stopwatchB = false;
-            } catch (Exception e) {
-                textViewRes.setText("didn't work, please try again");
-            }
         } else if (voiceResults.contains("help") || voiceResults.contains("Help")) {
             textViewRes.setText(
                     "notes -read/save note\n" +
                             "alarm - set alarm\n" +
-                            "stopWatch - set timer\n" +
-                            "countdown - set countdown\n" +
+                            "timer - set timer\n" +
+                            "countdown / stopWatch - set stopwatch\n" +
                             "Local time- what time is it\n" +
                             "for any search just ask");
 //        }

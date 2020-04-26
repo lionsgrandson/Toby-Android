@@ -23,10 +23,10 @@ public class StopWatch  extends Activity {
                     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                     // Vibrate for 500 milliseconds
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        v.vibrate(VibrationEffect.createOneShot(3000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
                     } else {
                         //deprecated in API 26
-                        v.vibrate(3000);
+                        v.vibrate(1000);
 
                     }
                 }catch (Exception e){
