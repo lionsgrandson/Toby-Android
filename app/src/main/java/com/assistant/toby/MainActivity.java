@@ -22,8 +22,9 @@ public class MainActivity extends AppCompatActivity {
     Button stpBtn;
     TextView textviewRes;
     TextView textViewReq;
+    TextView HelpTxt;
 //    Activity activity = ;
-    STT stt = new STT();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
         textviewRes = (TextView) findViewById(R.id.response);
         textViewReq = (TextView) findViewById(R.id.request);
         stpBtn = (Button) findViewById(R.id.stpBtn);
-        System.out.println("testing");
-
+        HelpTxt = (TextView) findViewById(R.id.helpTxt);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -62,14 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public void BClick(View view) {
 //        AlphaAPI alphaAPI = new AlphaAPI("star wars",textviewRes);
 //        alphaAPI.run();
+        STT stt = new STT(HelpTxt);
         stt.listen(this.getApplicationContext(), textviewRes, textViewReq, "What do you want?",stpBtn,MainActivity.this);
-
-        if (stt.alm) {
-            Intent alam = new Intent(AlarmClock.ACTION_SET_ALARM);
-            alam.putExtra(AlarmClock.EXTRA_MESSAGE, "StopWatch Title");
-            alam.putExtra(AlarmClock.EXTRA_VIBRATE, true);
-            startActivity(alam);
-            stt.alm = false;
-        }
     }
 }
