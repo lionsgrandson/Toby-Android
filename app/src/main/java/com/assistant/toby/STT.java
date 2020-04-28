@@ -157,6 +157,7 @@ public class STT extends Activity {
                 Intent alam = new Intent(AlarmClock.ACTION_SET_ALARM);
                 alam.putExtra(AlarmClock.EXTRA_MESSAGE, "My Alarm");
                 alam.putExtra(AlarmClock.EXTRA_VIBRATE, true);
+                alam.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(alam);
             }catch (Exception e){
                 textViewRes.setText(e.getMessage());

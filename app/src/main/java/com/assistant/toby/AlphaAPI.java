@@ -105,9 +105,9 @@ public class AlphaAPI implements Runnable {
                 if (queryResult.isError()) {
                     System.out.println("Query error");
                     System.out.println("  error code: " + queryResult.getErrorCode());
-                    list.add("  error message: " + queryResult.getErrorMessage());
+                    textView.setText("  error message: " + queryResult.getErrorMessage());
                 } else if (!queryResult.isSuccess()) {
-                    System.out.println("Query was not understood; no results available.");
+                    textView.setText("no results available.");
                 } else {
                     // Got a result.
                     System.out.println("Successful query. Pods follow:\n");

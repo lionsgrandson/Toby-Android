@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     TextView HelpTxt;
 //    Activity activity = ;
 
+    //TODO Google Search
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         textViewReq = (TextView) findViewById(R.id.request);
         stpBtn = (Button) findViewById(R.id.stpBtn);
         HelpTxt = (TextView) findViewById(R.id.helpTxt);
+
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     public void BClick(View view) {
 //        AlphaAPI alphaAPI = new AlphaAPI("star wars",textviewRes);
 //        alphaAPI.run();
+
         STT stt = new STT(HelpTxt);
         stt.listen(this.getApplicationContext(), textviewRes, textViewReq, "What do you want?",stpBtn,MainActivity.this);
     }
