@@ -2,6 +2,7 @@ package com.assistant.toby;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

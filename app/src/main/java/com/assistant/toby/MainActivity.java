@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.AlarmClock;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,12 +19,16 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
     Button btn;
     Button stpBtn;
     TextView textviewRes;
     TextView textViewReq;
     TextView HelpTxt;
+    String talk;
+    TTS tts = new TTS();
 //    Activity activity = ;
 
     //TODO Google Search
@@ -59,13 +65,23 @@ public class MainActivity extends AppCompatActivity {
                 requestPermissions(new String[]{Manifest.permission.INTERNET}, 0);
             }
         }
+
+    }
+    @Override
+    public void onPause(){
+        tts.onPause();
+        super.onPause();
     }
 
     public void BClick(View view) {
 //        AlphaAPI alphaAPI = new AlphaAPI("star wars",textviewRes);
 //        alphaAPI.run();
 
+//        tts.onPause();
+
         STT stt = new STT(HelpTxt);
         stt.listen(this.getApplicationContext(), textviewRes, textViewReq, "What do you want?",stpBtn,MainActivity.this);
+
     }
+
 }

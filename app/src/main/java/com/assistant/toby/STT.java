@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.AlarmClock;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -13,7 +15,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +26,9 @@ public class STT extends Activity {
     boolean alm = false;
     boolean timer = false;
     boolean stopwatchB = false;
+    TTS tts = new TTS();
     int time;
+    int STPtime;
     String voice;
     CountDown countDown = new CountDown();
     Settings settings = new Settings();
@@ -52,6 +58,7 @@ public class STT extends Activity {
                         .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (voiceResults == null) {
                     textViewRes.setText("No results");
+                    tts.speak(context, textViewRes.getText().toString());
                 } else {
                     for (String match : voiceResults) {
                         System.out.println(match);
@@ -61,7 +68,8 @@ public class STT extends Activity {
                     if (done) {
                         Note note = new Note();
                         note.writeToFile(voice, context);
-                        textViewRes.setText("Your notes are:" + note.readFromFile(context));
+//                        textViewRes.setText("Your notes are:" + note.readFromFile(context));
+
                     } else {
                         done = false;
                         heard(voiceResults.get(0), context, textViewRes, textViewReq, stpBtn, actvity);
@@ -74,6 +82,7 @@ public class STT extends Activity {
             @Override
             public void onReadyForSpeech(Bundle params) {
                 textViewRes.setText("Ready for speech" + "\n" + print);
+//                tts.speak(context,"Ready for speech");
             }
 
             /**
@@ -102,11 +111,13 @@ public class STT extends Activity {
 //                er[7] = "you've already started the Microphone, wait a minute and try again";
                 er[8] = "Don't have the Permissions for that";
                 textViewRes.setText(er[error - 1]);
+                tts.speak(context, textViewRes.getText().toString());
             }
 
             @Override
             public void onBeginningOfSpeech() {
                 textViewRes.setText("Speech starting" + "\n" + print);
+//                tts.speak(context,textViewRes.getText().toString());
             }
 
             @Override
@@ -140,18 +151,20 @@ public class STT extends Activity {
         };
         recognizer.setRecognitionListener(listener);
         recognizer.startListening(intent);
+
     }
 
     @SuppressLint("SetTextI18n")
     public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq, Button stpBtn, Activity activity) {
         String[] voiceResultsSpl;
 
-        if (voiceResults.contains("note") && voiceResults.contains("save") ) {
+        if (voiceResults.contains("note") && voiceResults.contains("save")) {
             listen(context, textViewRes, textViewReq, "What is the note?", stpBtn, activity);
             done = true;
         } else if (voiceResults.contains("read") && voiceResults.contains("note")) {
             Note note = new Note();
             textViewRes.setText(note.readFromFile(context));
+            tts.speak(context, "Your notes are" + note.readFromFile(context));
         } else if (voiceResults.contains("alarm")) {
             try {
                 Intent alam = new Intent(AlarmClock.ACTION_SET_ALARM);
@@ -159,38 +172,48 @@ public class STT extends Activity {
                 alam.putExtra(AlarmClock.EXTRA_VIBRATE, true);
                 alam.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(alam);
-            }catch (Exception e){
-                textViewRes.setText(e.getMessage());
+            } catch (Exception e) {
+                textViewRes.setText("something didn't work");
+                tts.speak(context, textViewRes.getText().toString());
             }
-        } else if (voiceResults.contains("timer") || voiceResults.toLowerCase().contains("stopwatch")) {
+        } else if (voiceResults.toLowerCase().contains("stopwatch")) {
             stpBtn.setVisibility(View.VISIBLE);
-            time = 0;
             try {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        while (time != -1) {
-                            time++;
-
-                            textViewRes.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (time >= 60 && time <= 3600) {
-                                        int min = time / 60;
-                                        textViewRes.setText("Minute " + (min) + ":" + (time - (60 * min)));
-                                    } else if (time >= 3600) {
-                                        textViewRes.setText("stopped at one hour");
-                                    } else {
-                                        textViewRes.setText("Seconds " + time);
-                                    }
-                                }
-                            });
+                        STPtime = 0;
+                        while (STPtime >= 0) {
                             try {
-                                Thread.sleep(1000);
+                                textViewRes.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (STPtime >= 60 && STPtime <= 3600) {
+                                            int min = STPtime / 60;
+//                                        tts.speak(context,(min)+" "+(STPtime- (60 *min )));
+                                            textViewRes.setText("Minute " + (min) + ":" + (STPtime - (60 * min)));
+                                        } else if (STPtime >= 3600) {
+                                            textViewRes.setText("stopped at one hour");
+                                            tts.speak(context, textViewRes.getText().toString());
+                                        } else {
+                                            textViewRes.setText("Seconds " + STPtime);
+//                                        tts.speak(context,String.valueOf(STPtime.intValue()));
+                                        }
+
+                                    }
+                                });
+                                if (STPtime >= 0) {
+                                    Thread.sleep(500);
+                                    STPtime = (STPtime + 1);
+                                    Thread.sleep(500);
+                                }
                             } catch (Exception e) {
-                                textViewRes.setText(e.getMessage());
+                                textViewRes.setText("something didn't work, please try again");
+                                tts.speak(context, textViewRes.getText().toString());
                             }
+
                         }
+                        tts.speak(context, textViewRes.getText().toString());
                     }
                 };
                 Thread myThread = new Thread(runnable);
@@ -199,14 +222,14 @@ public class STT extends Activity {
                 stpBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        time = -1;
+                        STPtime = -2;
                         stpBtn.setVisibility(View.INVISIBLE);
                     }
                 });
             } catch (Exception e) {
                 textViewRes.setText(e.getMessage());
             }
-        } else if (voiceResults.toLowerCase().contains("countdown")) {
+        } else if (voiceResults.toLowerCase().contains("countdown") || voiceResults.contains("timer")) {
             try {
                 voiceResultsSpl = voiceResults.split(" ");
                 for (int i = 0; i <= voiceResultsSpl.length; i++) {
@@ -228,6 +251,7 @@ public class STT extends Activity {
                 countDown.setStopWatch(textViewRes, time, context);
             } catch (Exception e) {
                 textViewRes.setText("didn't work, please try again");
+                tts.speak(context, textViewRes.getText().toString());
             }
 
 //        } else if (voiceResults.contains("how")
@@ -238,18 +262,20 @@ public class STT extends Activity {
 //                || voiceResults.contains("when")
 //                || voiceResults.contains("define")) {
 //            alphaAPISample.AlphaAPISample(textView, voiceResults);
-        } else if (voiceResults.equalsIgnoreCase("Hello") || voiceResults.equalsIgnoreCase("Hi") ) {
+        } else if (voiceResults.equalsIgnoreCase("Hello") || voiceResults.equalsIgnoreCase("Hi")) {
             textViewRes.setText("Hi, I am Toby, created on June of 2019. How can I help?");
-        } else if (voiceResults.contains("Who created you") || voiceResults.contains("who created you") ) {
+            tts.speak(context, textViewRes.getText().toString());
+        } else if (voiceResults.contains("Who created you") || voiceResults.contains("who created you")) {
             textViewRes.setText("I was ceated by Moshe Schwartzberg, as a summer project that then became a year long project");
-        } else if (voiceResults.toLowerCase().contains("help") ) {
+        } else if (voiceResults.toLowerCase().contains("help")) {
             textViewRes.setText(
                     "notes -read/save note\n" +
                             "alarm - set alarm\n" +
-                            "timer  - set timer /start stopWatch\n" +
-                            "countdown - set stopwatch\n" +
+                            "countdown  - set timer/start a countdown  \n" +
+                            "timer - start stopWatch\n" +
                             "Local time- what time is it\n" +
                             "for any search just ask");
+            tts.speak(context, textViewRes.getText().toString());
 //        }
 //        else if (voiceResults.contains("setting") ){//||  voiceResults.contains("long") || voiceResults.contains("short")) {
 //            if (voiceResults.toLowerCase().contains("long")) {
@@ -265,14 +291,22 @@ public class STT extends Activity {
 //            textViewRes.setText(String.valueOf(lOrS));
 //            listen(context, textViewRes, textViewReq, "What do you want to change? \n long or short answer");
 
-        } else {
-            if (voiceResults.contains("time")) {
-                Date currentTime = new Date();
-                textViewRes.setText(currentTime.toString() + "\nNote: this only works for you're local time.");
+        } else if (voiceResults.contains("time")) {
+//            SystemClock currentTime = new SystemClock();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                textViewRes.setText(SystemClock.currentGnssTimeClock().toString());//+ "\nNote: this only works for you're local time.");
             } else {
-                AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes);
-                alphaAPI.run();
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                textViewRes.setText(sdf.format(cal.getTime()));
             }
+            tts.speak(context, textViewRes.getText().toString());
+
+        } else {
+            tts.speak(context, textViewRes.getText().toString());
+            AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, context);
+            alphaAPI.run();
         }
+
     }
 }

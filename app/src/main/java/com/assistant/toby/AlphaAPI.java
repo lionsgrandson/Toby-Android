@@ -1,6 +1,7 @@
 package com.assistant.toby;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -55,13 +56,15 @@ public class AlphaAPI implements Runnable {
     private static String appid = "RJ4EAU-J59QQ64KQP";
     ArrayList<String> list = new ArrayList<>();
     WAQueryResult queryResult;
-
+    TTS tts = new TTS();
     String STT;
     TextView textView;
     boolean runOrNot;
-    public AlphaAPI(String STT, TextView textView) {
+    Context context;
+    public AlphaAPI(String STT, TextView textView, Context context) {
         this.STT = STT;
         this.textView = textView;
+        this.context = context;
     }
 
 
@@ -106,8 +109,11 @@ public class AlphaAPI implements Runnable {
                     System.out.println("Query error");
                     System.out.println("  error code: " + queryResult.getErrorCode());
                     textView.setText("  error message: " + queryResult.getErrorMessage());
+                    tts.speak(context,"something failed");
                 } else if (!queryResult.isSuccess()) {
                     textView.setText("no results available.");
+                    tts.speak(context,"something faild");
+
                 } else {
                     // Got a result.
                     System.out.println("Successful query. Pods follow:\n");
@@ -129,11 +135,13 @@ public class AlphaAPI implements Runnable {
                     }
                     textView.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
 
+                    tts.speak(context,setTextSpl[0] + "\n" + setTextSpl[1]);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         textView.setContextClickable(true);
                         String finalSetTextStr = setTextStr;
                         textView.setOnClickListener(v -> {
                             textView.setText(finalSetTextStr);
+                            tts.speak(context,textView.getText().toString());
                         });
                     }
 
@@ -141,10 +149,10 @@ public class AlphaAPI implements Runnable {
                     // These can be obtained by methods of WAQueryResult or objects deeper in the hierarchy.
                 }
             } catch (WAException e) {
-                textView.setText(e.getMessage());
+                textView.setText("something went wrong");
             }
         } catch (Exception e) {
-            textView.setText(e.getMessage());
+            textView.setText("something went wrong");
         }
     }
 
