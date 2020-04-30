@@ -1,13 +1,18 @@
 package com.assistant.toby;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.HandlerThread;
 import android.os.StrictMode;
 import android.provider.AlarmClock;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +24,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,11 +34,13 @@ public class MainActivity extends AppCompatActivity {
     TextView textViewReq;
     TextView HelpTxt;
     String talk;
-    TTS tts = new TTS();
+//    TTS tts = new TTS();
 //    Activity activity = ;
 
-    //TODO Google Search
+    //TODO fix TTS (repeating text)
+    //TODO fix stop button for TTS
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,22 +74,33 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    }
-    @Override
-    public void onPause(){
-        tts.onPause();
-        super.onPause();
+//                STT stt = new STT(HelpTxt);
+//                stt.moveTaskToBack(true);
+//                stt.listen(getApplicationContext(), textviewRes, textViewReq, "", stpBtn, MainActivity.this);
+
+
     }
 
+//    TTSManager ttsManager = new TTSManager();
+TTS tts = new TTS();
+    @SuppressLint("StaticFieldLeak")
     public void BClick(View view) {
 //        AlphaAPI alphaAPI = new AlphaAPI("star wars",textviewRes);
 //        alphaAPI.run();
 
 //        tts.onPause();
 
-        STT stt = new STT(HelpTxt);
-        stt.listen(this.getApplicationContext(), textviewRes, textViewReq, "What do you want?",stpBtn,MainActivity.this);
+        STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this);
+        stt.listen();
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        tts.onPause();
+    }
+
+
 }
+

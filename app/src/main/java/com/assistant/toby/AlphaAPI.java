@@ -1,14 +1,8 @@
 package com.assistant.toby;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
 import android.widget.TextView;
-
-import androidx.annotation.MainThread;
 
 import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
@@ -18,8 +12,8 @@ import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
 import com.wolfram.alpha.WASubpod;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 /*
  * A simple example program demonstrating the WolframAlpha.jar library. The program
@@ -56,20 +50,26 @@ public class AlphaAPI implements Runnable {
     private static String appid = "RJ4EAU-J59QQ64KQP";
     ArrayList<String> list = new ArrayList<>();
     WAQueryResult queryResult;
+    //    TTSManager tts = new TTSManager();
     TTS tts = new TTS();
+
     String STT;
     TextView textView;
     boolean runOrNot;
     Context context;
+
     public AlphaAPI(String STT, TextView textView, Context context) {
         this.STT = STT;
         this.textView = textView;
         this.context = context;
     }
 
+    AtomicReference<String> speakTxt = new AtomicReference<>("");
 
-    @Override
-    public void run() {
+    String setTextStr = "";
+    String[] setTextSpl = null;
+
+    public String runStr() {
         try {
             // Use "pi" as the default query, or caller can supply it as the lone command-line argument.
             String input = STT;
@@ -92,8 +92,6 @@ public class AlphaAPI implements Runnable {
             // Set properties of the query.
             query.setInput(input);
 
-            String setTextStr = "";
-            String[] setTextSpl = null;
 
             try {
                 // For educational purposes, print out the URL we are about to send:
@@ -109,12 +107,13 @@ public class AlphaAPI implements Runnable {
                     System.out.println("Query error");
                     System.out.println("  error code: " + queryResult.getErrorCode());
                     textView.setText("  error message: " + queryResult.getErrorMessage());
-                    tts.speak(context,"something failed");
+                    tts.speak(context, "something failed");
                 } else if (!queryResult.isSuccess()) {
                     textView.setText("no results available.");
-                    tts.speak(context,"something faild");
+                    tts.speak(context, "no results available");
 
                 } else {
+
                     // Got a result.
                     System.out.println("Successful query. Pods follow:\n");
                     for (WAPod pod : queryResult.getPods()) {
@@ -124,26 +123,16 @@ public class AlphaAPI implements Runnable {
                             for (WASubpod subpod : pod.getSubpods()) {
                                 for (Object element : subpod.getContents()) {
                                     if (element instanceof WAPlainText) {
-                                            setTextStr += ((WAPlainText) element).getText() + "\n";
-                                            setTextSpl = setTextStr.split("\n");
-                                            System.out.println("");
+                                        setTextStr += ((WAPlainText) element).getText() + "\n";
+                                        setTextSpl = setTextStr.split("\n");
+                                        System.out.println("");
                                     }
                                 }
                             }
                             System.out.println("");
                         }
                     }
-                    textView.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
 
-                    tts.speak(context,setTextSpl[0] + "\n" + setTextSpl[1]);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        textView.setContextClickable(true);
-                        String finalSetTextStr = setTextStr;
-                        textView.setOnClickListener(v -> {
-                            textView.setText(finalSetTextStr);
-                            tts.speak(context,textView.getText().toString());
-                        });
-                    }
 
                     // We ignored many other types of Wolfram|Alpha output, such as warnings, assumptions, etc.
                     // These can be obtained by methods of WAQueryResult or objects deeper in the hierarchy.
@@ -154,6 +143,11 @@ public class AlphaAPI implements Runnable {
         } catch (Exception e) {
             textView.setText("something went wrong");
         }
+        return setTextStr;
     }
 
+    @Override
+    public void run() {
+        runStr();
+    }
 }

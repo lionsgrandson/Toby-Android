@@ -65,7 +65,7 @@ public class TTS {
 //            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         } else {
 
-                tts.speak(text , TextToSpeech.QUEUE_ADD,null);
+                tts.speak(text , TextToSpeech.QUEUE_FLUSH,null);
 
         }
     }

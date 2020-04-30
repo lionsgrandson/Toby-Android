@@ -34,13 +34,25 @@ public class STT extends Activity {
     Settings settings = new Settings();
     boolean lOrS;
     TextView helpTxt;
+    String speakTxt = "";
+    Context context;
+    TextView textViewRes;
+    TextView textViewReq;
+    String print;
+    Button stpBtn;
+    Activity actvity;
 
-
-    public STT(TextView helpTxt) {
+    public STT(TextView helpTxt,  Context context, TextView textViewRes, TextView textViewReq, String print, Button stpBtn, Activity actvity) {
         this.helpTxt = helpTxt;
+        this.context = context;
+        this.textViewRes = textViewRes;
+        this.textViewReq = textViewReq;
+        this.print = print;
+        this.stpBtn = stpBtn;
+        this.actvity = actvity;
     }
 
-    public void listen(Context context, TextView textViewRes, TextView textViewReq, String print, Button stpBtn, Activity actvity) {
+    public void listen() {
 
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -159,7 +171,7 @@ public class STT extends Activity {
         String[] voiceResultsSpl;
 
         if (voiceResults.contains("note") && voiceResults.contains("save")) {
-            listen(context, textViewRes, textViewReq, "What is the note?", stpBtn, activity);
+            listen();
             done = true;
         } else if (voiceResults.contains("read") && voiceResults.contains("note")) {
             Note note = new Note();
@@ -303,10 +315,28 @@ public class STT extends Activity {
             tts.speak(context, textViewRes.getText().toString());
 
         } else {
+
             tts.speak(context, textViewRes.getText().toString());
             AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, context);
             alphaAPI.run();
-        }
 
+            String setTextStr = alphaAPI.runStr();
+            String[] setTextSpl = setTextStr.split("\n");
+            ;
+
+            textViewRes.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
+            speakTxt = (setTextSpl[0] + "\n" + setTextSpl[1]);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                textViewRes.setContextClickable(true);
+                String finalSetTextStr = setTextStr;
+                textViewRes.setOnClickListener(v -> {
+                    textViewRes.setText(finalSetTextStr);
+                    speakTxt = (finalSetTextStr);
+                });
+            }
+            tts.speak(context, speakTxt);
+        }
     }
+
 }

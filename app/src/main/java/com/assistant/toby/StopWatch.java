@@ -36,8 +36,8 @@ public class StopWatch  {
 
 //                changeTXT(time,textView);
                 textView.setText(time);
-                TTS tts = new TTS();
-                tts.speak(context,textView.getText().toString());
+//                TTSManager tts = new TTSManager();
+//                tts.initQueue(textView.getText().toString());
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
