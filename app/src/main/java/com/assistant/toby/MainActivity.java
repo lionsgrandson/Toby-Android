@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import android.os.StrictMode;
 import android.provider.AlarmClock;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     TextView textviewRes;
     TextView textViewReq;
     TextView HelpTxt;
-    String talk;
+    Button endSpeech;
 //    TTS tts = new TTS();
 //    Activity activity = ;
 
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         textViewReq = (TextView) findViewById(R.id.request);
         stpBtn = (Button) findViewById(R.id.stpBtn);
         HelpTxt = (TextView) findViewById(R.id.helpTxt);
+        endSpeech = (Button) findViewById(R.id.endSpeech);
 
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -74,33 +77,32 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-//                STT stt = new STT(HelpTxt);
-//                stt.moveTaskToBack(true);
-//                stt.listen(getApplicationContext(), textviewRes, textViewReq, "", stpBtn, MainActivity.this);
-
-
     }
 
-//    TTSManager ttsManager = new TTSManager();
-TTS tts = new TTS();
+    //    TTSManager ttsManager = new TTSManager();
+    TTS ttss = new TTS();
+
     @SuppressLint("StaticFieldLeak")
     public void BClick(View view) {
-//        AlphaAPI alphaAPI = new AlphaAPI("star wars",textviewRes);
-//        alphaAPI.run();
 
-//        tts.onPause();
-
-        STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this);
+        STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this,endSpeech);
         stt.listen();
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        tts.onPause();
-    }
+//    @Override
+//    public void onPause() {
+//
+//        super.onPause();
+//
+//    }
 
+public void EndSP(View view){
+    ttss.stop();
+//    ttss.speak(getApplicationContext()," ");
+//    ttss.getIntent().int
+//    this.actistopService(this.ttss.getIntent());
+}
 
 }
 

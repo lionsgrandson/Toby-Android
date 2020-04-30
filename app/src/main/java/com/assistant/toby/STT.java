@@ -26,7 +26,6 @@ public class STT extends Activity {
     boolean alm = false;
     boolean timer = false;
     boolean stopwatchB = false;
-    TTS tts = new TTS();
     int time;
     int STPtime;
     String voice;
@@ -41,8 +40,11 @@ public class STT extends Activity {
     String print;
     Button stpBtn;
     Activity actvity;
+    Button endSpeech;
+    TTS tts = new TTS();
 
-    public STT(TextView helpTxt,  Context context, TextView textViewRes, TextView textViewReq, String print, Button stpBtn, Activity actvity) {
+
+    public STT(TextView helpTxt, Context context, TextView textViewRes, TextView textViewReq, String print, Button stpBtn, Activity actvity, Button endSpeech) {
         this.helpTxt = helpTxt;
         this.context = context;
         this.textViewRes = textViewRes;
@@ -50,10 +52,11 @@ public class STT extends Activity {
         this.print = print;
         this.stpBtn = stpBtn;
         this.actvity = actvity;
+        this.endSpeech = endSpeech;
     }
 
-    public void listen() {
 
+    public void listen() {
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -326,16 +329,17 @@ public class STT extends Activity {
 
             textViewRes.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
             speakTxt = (setTextSpl[0] + "\n" + setTextSpl[1]);
-
+            tts.speak(context, speakTxt);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 textViewRes.setContextClickable(true);
                 String finalSetTextStr = setTextStr;
                 textViewRes.setOnClickListener(v -> {
                     textViewRes.setText(finalSetTextStr);
                     speakTxt = (finalSetTextStr);
+                    tts.speak(context, speakTxt);
                 });
             }
-            tts.speak(context, speakTxt);
+
         }
     }
 

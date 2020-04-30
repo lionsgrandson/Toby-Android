@@ -7,18 +7,22 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.text.PrecomputedText;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Locale;
 import java.util.Set;
 
-public class TTS {
+public class TTS extends AppCompatActivity {
 
     TextToSpeech tts;
     String text;
 
-    public void speak(Context context, String textViewText) {
+    public void speak(Context context, String textViewText)  {
         tts = new
 
                 TextToSpeech(context, new TextToSpeech.OnInitListener() {
@@ -50,23 +54,35 @@ public class TTS {
 
     }
 
-    public void onPause() {
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
-    }
+
 
     private void ConvertTextToSpeech(String textViewText) {
         // TODO Auto-generated method stub
         text = textViewText;
         if (text == null || "".equals(text)) {
             text = "Content not available";
-//            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         } else {
 
-                tts.speak(text , TextToSpeech.QUEUE_FLUSH,null);
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 
         }
+
     }
+public void stop(){
+this.finishActivity(this.getTaskId());
+}
+
+//    @Override
+//    public void onPause() {
+//        if (tts != null) {
+//            tts.stop();
+//            tts.shutdown();
+////            getApplicationContext().stopService(this.getIntent());
+//        }
+//        super.onPause();
+//
+//    }
+
+
 }
