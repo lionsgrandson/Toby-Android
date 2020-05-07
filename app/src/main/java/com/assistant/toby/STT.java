@@ -325,7 +325,6 @@ public class STT extends Activity {
 
             String setTextStr = alphaAPI.runStr();
             String[] setTextSpl = setTextStr.split("\n");
-            ;
 
             textViewRes.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
             speakTxt = (setTextSpl[0] + "\n" + setTextSpl[1]);
