@@ -306,18 +306,18 @@ public class STT extends Activity {
 //            textViewRes.setText(String.valueOf(lOrS));
 //            listen(context, textViewRes, textViewReq, "What do you want to change? \n long or short answer");
 
-        } else if (voiceResults.contains("time")) {
-//            SystemClock currentTime = new SystemClock();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                textViewRes.setText(SystemClock.currentGnssTimeClock().toString());//+ "\nNote: this only works for you're local time.");
-            } else {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                textViewRes.setText(sdf.format(cal.getTime()));
-            }
-            tts.speak(context, textViewRes.getText().toString());
+//        } else if (voiceResults.contains("time")) {
+////            SystemClock currentTime = new SystemClock();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                textViewRes.setText(SystemClock.currentGnssTimeClock().toString());//+ "\nNote: this only works for you're local time.");
+//            } else {
+//                Calendar cal = Calendar.getInstance();
+//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+//                textViewRes.setText(sdf.format(cal.getTime()));
+//            }
+//            tts.speak(context, textViewRes.getText().toString());
 
-        } else {
+        }else {
 
             tts.speak(context, textViewRes.getText().toString());
             AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, context);
@@ -335,8 +335,8 @@ public class STT extends Activity {
                 String finalSetTextStr = setTextStr;
                 textViewRes.setOnClickListener(v -> {
                     textViewRes.setText(finalSetTextStr);
-                    speakTxt = (finalSetTextStr);
-                    tts.speak(context, speakTxt);
+//                    speakTxt = (finalSetTextStr);
+//                    tts.speak(context, speakTxt);
                 });
             }
 
