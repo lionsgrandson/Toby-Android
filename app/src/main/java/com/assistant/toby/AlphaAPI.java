@@ -64,12 +64,12 @@ public class AlphaAPI implements Runnable {
         this.context = context;
     }
 
-    AtomicReference<String> speakTxt = new AtomicReference<>("");
+    String speakTxt = "";
 
     String setTextStr = "";
     String[] setTextSpl = null;
 
-    public String runStr() {
+    public void run() {
         try {
             // Use "pi" as the default query, or caller can supply it as the lone command-line argument.
             String input = STT;
@@ -107,10 +107,8 @@ public class AlphaAPI implements Runnable {
                     System.out.println("Query error");
                     System.out.println("  error code: " + queryResult.getErrorCode());
                     textView.setText("  error message: " + queryResult.getErrorMessage());
-                    tts.speak(context, "something failed");
                 } else if (!queryResult.isSuccess()) {
                     textView.setText("no results available.");
-                    tts.speak(context, "no results available");
 
                 } else {
 
@@ -132,7 +130,15 @@ public class AlphaAPI implements Runnable {
                             System.out.println("");
                         }
                     }
-
+                    textView.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
+//                        speakTxt = (setTextSpl[0] + "\n" + setTextSpl[1]);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        textView.setContextClickable(true);
+                        String finalSetTextStr = setTextStr;
+                        textView.setOnClickListener(v -> {
+                            textView.setText(finalSetTextStr);
+                        });
+                    }
 
                     // We ignored many other types of Wolfram|Alpha output, such as warnings, assumptions, etc.
                     // These can be obtained by methods of WAQueryResult or objects deeper in the hierarchy.
@@ -143,11 +149,7 @@ public class AlphaAPI implements Runnable {
         } catch (Exception e) {
             textView.setText("something went wrong");
         }
-        return setTextStr;
     }
 
-    @Override
-    public void run() {
-        runStr();
-    }
+
 }

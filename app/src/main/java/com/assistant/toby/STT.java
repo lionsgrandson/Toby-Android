@@ -53,6 +53,7 @@ public class STT extends Activity {
         this.stpBtn = stpBtn;
         this.actvity = actvity;
         this.endSpeech = endSpeech;
+//        tts.init(context);
     }
 
 
@@ -65,7 +66,8 @@ public class STT extends Activity {
                 "com.domain.app");
         SpeechRecognizer recognizer = SpeechRecognizer
                 .createSpeechRecognizer(context);
-        RecognitionListener listener = new RecognitionListener() {
+        RecognitionListener listener = null;
+        listener = new RecognitionListener() {
 
             @Override
             public void onResults(Bundle results) {
@@ -83,7 +85,7 @@ public class STT extends Activity {
                     if (done) {
                         Note note = new Note();
                         note.writeToFile(voice, context);
-//                        textViewRes.setText("Your notes are:" + note.readFromFile(context));
+                        //                        textViewRes.setText("Your notes are:" + note.readFromFile(context));
 
                     } else {
                         done = false;
@@ -97,7 +99,7 @@ public class STT extends Activity {
             @Override
             public void onReadyForSpeech(Bundle params) {
                 textViewRes.setText("Ready for speech" + "\n" + print);
-//                tts.speak(context,"Ready for speech");
+                //                tts.speak(context,"Ready for speech");
             }
 
             /**
@@ -123,7 +125,7 @@ public class STT extends Activity {
                 er[4] = "Something is wrong with your side, try again.";
                 er[5] = "Didn't hear anything";
                 er[6] = "Can't understand what you said";
-//                er[7] = "you've already started the Microphone, wait a minute and try again";
+                //                er[7] = "you've already started the Microphone, wait a minute and try again";
                 er[8] = "Don't have the Permissions for that";
                 textViewRes.setText(er[error - 1]);
                 tts.speak(context, textViewRes.getText().toString());
@@ -132,7 +134,7 @@ public class STT extends Activity {
             @Override
             public void onBeginningOfSpeech() {
                 textViewRes.setText("Speech starting" + "\n" + print);
-//                tts.speak(context,textViewRes.getText().toString());
+                //                tts.speak(context,textViewRes.getText().toString());
             }
 
             @Override
@@ -142,7 +144,7 @@ public class STT extends Activity {
 
             @Override
             public void onEndOfSpeech() {
-//                textView.setText(heard());
+                //                textView.setText(heard());
             }
 
             @Override
@@ -164,10 +166,11 @@ public class STT extends Activity {
             }
 
         };
+
         recognizer.setRecognitionListener(listener);
         recognizer.startListening(intent);
 
-    }
+}
 
     @SuppressLint("SetTextI18n")
     public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq, Button stpBtn, Activity activity) {
@@ -318,26 +321,10 @@ public class STT extends Activity {
 //            tts.speak(context, textViewRes.getText().toString());
 
         }else {
-
-            tts.speak(context, textViewRes.getText().toString());
             AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, context);
             alphaAPI.run();
-
-            String setTextStr = alphaAPI.runStr();
-            String[] setTextSpl = setTextStr.split("\n");
-
-            textViewRes.setText(setTextSpl[0] + "\n" + setTextSpl[1] + ("\nRead More..."));
-            speakTxt = (setTextSpl[0] + "\n" + setTextSpl[1]);
-            tts.speak(context, speakTxt);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                textViewRes.setContextClickable(true);
-                String finalSetTextStr = setTextStr;
-                textViewRes.setOnClickListener(v -> {
-                    textViewRes.setText(finalSetTextStr);
-//                    speakTxt = (finalSetTextStr);
-//                    tts.speak(context, speakTxt);
-                });
-            }
+            tts.speak(context, textViewRes.getText().toString());
+//            tts.speak(context, speakTxt);
 
         }
     }

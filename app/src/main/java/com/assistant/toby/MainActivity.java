@@ -82,10 +82,9 @@ public class MainActivity extends AppCompatActivity {
     //    TTSManager ttsManager = new TTSManager();
     TTS ttss = new TTS();
 
-    @SuppressLint("StaticFieldLeak")
     public void BClick(View view) {
 
-        STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this,endSpeech);
+        STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this, endSpeech);
         stt.listen();
 
     }
@@ -97,12 +96,13 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
-public void EndSP(View view){
-    ttss.stop();
+    public void EndSP(View view) {
+        ttss.onPause();
+//        ttss.finishActivity(TextToSpeech.ERROR);
 //    ttss.speak(getApplicationContext()," ");
 //    ttss.getIntent().int
 //    this.actistopService(this.ttss.getIntent());
-}
+    }
 
 }
 

@@ -23,8 +23,7 @@ public class TTS extends AppCompatActivity {
     TextToSpeech tts;
     String text;
 
-
-    public void speak(Context context, String textViewText)  {
+    public void speak(Context context, String textViewText) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.DONUT) {
             tts = new
 
@@ -32,14 +31,15 @@ public class TTS extends AppCompatActivity {
 
                 @Override
                 public void onInit(int status) {
+                    // TODO Auto-generated method stub
                     Voice voice = null;
                     if (status == TextToSpeech.SUCCESS) {
                         int result = tts.setLanguage(Locale.US);
-                        Voice v= null;
+                        Voice v = null;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            Set<String> a=new HashSet<>();
+                            Set<String> a = new HashSet<>();
                             a.add("male");
-                            v = new Voice("en-us-x-sfg#male_2-local",new Locale("en","US"),400,200,true,a);
+                            v = new Voice("en-us-x-sfg#male_2-local", new Locale("en", "US"), 400, 200, true, a);
                             tts.setVoice(v);
                         }
 //                        tts.setSpeechRate(0.8f);
@@ -48,7 +48,7 @@ public class TTS extends AppCompatActivity {
                             Log.e("error", "This Language is not supported");
                         } else {
                             ConvertTextToSpeech(textViewText);
-    //                        tts.speak("Text to say aloud", TextToSpeech.QUEUE_ADD, null);
+                            //                        tts.speak("Text to say aloud", TextToSpeech.QUEUE_ADD, null);
                         }
                     } else
                         Log.e("error", "Initilization Failed!");
@@ -58,7 +58,6 @@ public class TTS extends AppCompatActivity {
 
 
     }
-
 
 
     private void ConvertTextToSpeech(String textViewText) {
@@ -74,20 +73,22 @@ public class TTS extends AppCompatActivity {
         }
 
     }
-public void stop(){
-this.finishActivity(this.getTaskId());
-}
 
-//    @Override
-//    public void onPause() {
-//        if (tts != null) {
-//            tts.stop();
-//            tts.shutdown();
-////            getApplicationContext().stopService(this.getIntent());
-//        }
-//        super.onPause();
-//
-//    }
+    public void stop() {
+        if (tts != null) {
+            tts.stop();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onPause();
+
+    }
 
 
 }
