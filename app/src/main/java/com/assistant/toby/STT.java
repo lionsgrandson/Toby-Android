@@ -2,18 +2,25 @@ package com.assistant.toby;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.SystemClock;
 import android.provider.AlarmClock;
+import android.service.notification.NotificationListenerService;
+import android.service.notification.StatusBarNotification;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.EventLog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,7 +63,6 @@ public class STT extends Activity {
 //        tts.init(context);
     }
 
-
     public void listen() {
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -69,6 +75,7 @@ public class STT extends Activity {
         RecognitionListener listener = null;
         listener = new RecognitionListener() {
 
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void onResults(Bundle results) {
                 ArrayList<String> voiceResults = results
@@ -170,9 +177,10 @@ public class STT extends Activity {
         recognizer.setRecognitionListener(listener);
         recognizer.startListening(intent);
 
-}
+    }
 
-    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @SuppressLint({"SetTextI18n", "NewApi", "OverrideAbstract"})
     public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq, Button stpBtn, Activity activity) {
         String[] voiceResultsSpl;
 
@@ -320,7 +328,18 @@ public class STT extends Activity {
 //            }
 //            tts.speak(context, textViewRes.getText().toString());
 
-        }else {
+        } else if (voiceResults.toLowerCase().contains("echo")) {
+            textViewRes.setText(textViewReq.getText().toString());
+            tts.speak(context, textViewRes.getText().toString());
+        } else if (voiceResults.toLowerCase().contains("notification")) {
+            try {
+
+            }catch (Exception e){
+                textViewRes.setText(e.getMessage());
+            }
+            textViewRes.setText("working text");
+
+        } else {
             AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, context);
             alphaAPI.run();
             tts.speak(context, textViewRes.getText().toString());
@@ -328,5 +347,4 @@ public class STT extends Activity {
 
         }
     }
-
 }

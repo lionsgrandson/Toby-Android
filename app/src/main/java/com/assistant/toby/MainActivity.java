@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         HelpTxt = (TextView) findViewById(R.id.helpTxt);
         endSpeech = (Button) findViewById(R.id.endSpeech);
 
+        STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this, endSpeech);
+        stt.listen();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -75,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.INTERNET}, 0);
             }
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_NOTIFICATION_POLICY) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY}, 0);
+            }
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE}, 0);
+            }
         }
 
     }
@@ -82,11 +90,11 @@ public class MainActivity extends AppCompatActivity {
     //    TTSManager ttsManager = new TTSManager();
     TTS ttss = new TTS();
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void BClick(View view) {
 
         STT stt = new STT(HelpTxt, getApplicationContext(), textviewRes, textViewReq, "What do you want?", stpBtn, MainActivity.this, endSpeech);
         stt.listen();
-
     }
 
 //    @Override
