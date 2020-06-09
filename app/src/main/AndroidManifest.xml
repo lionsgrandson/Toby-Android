@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.assistant.toby">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -12,8 +13,10 @@
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
-<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_SERVICE"/>-->
+    <uses-permission android:name="permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission android:name="android.service.notification.NotificationListenerService"/>
+    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+        tools:ignore="ProtectedPermissions" />
 
 
     <application
@@ -24,14 +27,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AlphaAPI" />
-        <activity android:name=".StopWatch"/>
+        <activity
+            android:name=".AlphaAPI"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".StopWatch"
+            tools:ignore="Instantiatable" />
     </application>
 
 </manifest>
