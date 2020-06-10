@@ -3,6 +3,8 @@ package com.assistant.toby;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
@@ -39,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
 //    TTS tts = new TTS();
 //    Activity activity = ;
 
-    //TODO fix TTS (repeating text)
     //TODO fix stop button for TTS
 
     @SuppressLint("StaticFieldLeak")
@@ -97,20 +99,34 @@ public class MainActivity extends AppCompatActivity {
         stt.listen();
     }
 
-//    @Override
-//    public void onPause() {
-//
-//        super.onPause();
+    public void EndSP(View view) {
+        addNotification();
+    }
+
+    public void addNotification() {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.toby_icon)
+                        .setContentTitle("Unread Message")   //this is the title of notification
+                        .setColor(101)
+                        .setContentText("You have an unread message.");
+        System.out.println();//this is the message showed in notification
+        Intent intent = new Intent(this, MainActivity.class);
+        System.out.println();
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+        // Add as notification
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
+    }
+//    public void addNotiff() {
+//        try {
+//            addNotification();
+//        }catch (Exception e){
+//            textviewRes.setText("main " +e.getMessage());
+//        }
 //
 //    }
-
-    public void EndSP(View view) {
-        ttss.onPause();
-//        ttss.finishActivity(TextToSpeech.ERROR);
-//    ttss.speak(getApplicationContext()," ");
-//    ttss.getIntent().int
-//    this.actistopService(this.ttss.getIntent());
-    }
 
 }
 

@@ -2,7 +2,6 @@ package com.assistant.toby;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -21,6 +20,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+
+import com.wolfram.alpha.test.Main;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class STT extends Activity {
 //        tts.init(context);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
     public void listen() {
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -333,17 +335,19 @@ public class STT extends Activity {
             tts.speak(context, textViewRes.getText().toString());
         } else if (voiceResults.toLowerCase().contains("notification")) {
             try {
-
+//                Notification notification = new Notification();
+                MainActivity mainActivity = new MainActivity();
+                mainActivity.addNotification();
+//                notification.addNotiff();
+                System.out.println();
             }catch (Exception e){
-                textViewRes.setText(e.getMessage());
+                textViewRes.setText("STT " + e.getMessage());
+                System.out.println();
             }
-            textViewRes.setText("working text");
-
         } else {
             AlphaAPI alphaAPI = new AlphaAPI(voiceResults, textViewRes, context);
             alphaAPI.run();
             tts.speak(context, textViewRes.getText().toString());
-//            tts.speak(context, speakTxt);
 
         }
     }
