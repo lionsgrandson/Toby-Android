@@ -99,26 +99,33 @@ public class MainActivity extends AppCompatActivity {
         stt.listen();
     }
 
+
     public void EndSP(View view) {
-        addNotification();
+        try {
+            Notification notification = new Notification(textviewRes);
+            notification.addNotification(getApplicationContext(), textviewRes, "Notice", "This button doesn't work yet");
+        }catch (Exception e){
+            textviewRes.setText(e.getMessage());
+            System.out.println(e.getCause());
+        }
     }
 
-    public void addNotification() {
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.toby_icon)
-                        .setContentTitle("Unread Message")   //this is the title of notification
-                        .setColor(101)
-                        .setContentText("You have an unread message.");
-        System.out.println();//this is the message showed in notification
-        Intent intent = new Intent(this, MainActivity.class);
-        System.out.println();
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(contentIntent);
-        // Add as notification
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0, builder.build());
-    }
+//    public void addNotification() {
+//        NotificationCompat.Builder builder =
+//                new NotificationCompat.Builder(this)
+//                        .setSmallIcon(R.drawable.toby_icon)
+//                        .setContentTitle("Unread Message")   //this is the title of notification
+//                        .setColor(101)
+//                        .setContentText("You have an unread message.");
+//        System.out.println();//this is the message showed in notification
+//        Intent intent = new Intent(this, MainActivity.class);
+//        System.out.println();
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        builder.setContentIntent(contentIntent);
+//        // Add as notification
+//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        manager.notify(0, builder.build());
+//    }
 //    public void addNotiff() {
 //        try {
 //            addNotification();

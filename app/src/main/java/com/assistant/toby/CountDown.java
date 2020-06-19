@@ -28,9 +28,13 @@ public class CountDown extends Activity {
                     // Vibrate for 500 milliseconds
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                        Notification notification = new Notification(textView);
+                        notification.addNotification(context,textView,"end of timer"," timer is at 0 seconds");
                     } else {
                         //deprecated in API 26
                         v.vibrate(1000);
+                        Notification notification = new Notification(textView);
+                        notification.addNotification(context,textView,"end of timer"," timer is at 0 seconds");
 
                     }
                 }catch (Exception e){

@@ -2,6 +2,8 @@ package com.assistant.toby;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
 import com.wolfram.alpha.test.Main;
 
@@ -185,6 +188,7 @@ public class STT extends Activity {
     @SuppressLint({"SetTextI18n", "NewApi", "OverrideAbstract"})
     public void heard(String voiceResults, Context context, TextView textViewRes, TextView textViewReq, Button stpBtn, Activity activity) {
         String[] voiceResultsSpl;
+        Notification notification = new Notification(textViewRes);
 
         if (voiceResults.contains("note") && voiceResults.contains("save")) {
             listen();
@@ -250,6 +254,7 @@ public class STT extends Activity {
                 stpBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        notification.addNotification(context,textViewReq,"StopWatch","Timer is at "+ STPtime);
                         STPtime = -2;
                         stpBtn.setVisibility(View.INVISIBLE);
                     }
@@ -335,10 +340,8 @@ public class STT extends Activity {
             tts.speak(context, textViewRes.getText().toString());
         } else if (voiceResults.toLowerCase().contains("notification")) {
             try {
-//                Notification notification = new Notification();
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.addNotification();
-//                notification.addNotiff();
+                textViewRes.setText("working on this");
+//                notification.addNotification(context, textViewRes);
                 System.out.println();
             }catch (Exception e){
                 textViewRes.setText("STT " + e.getMessage());
