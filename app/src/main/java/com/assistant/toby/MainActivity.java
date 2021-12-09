@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    //TODO split the paragraph for TTS
+    //TODO keep looking for input untill eveything is found
     Button btn;
     Button stpBtn;
     TextView textviewRes;
