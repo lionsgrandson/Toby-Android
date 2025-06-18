@@ -1,37 +1,18 @@
-# Toby - VoiceActivated Virtual Assistant
-
+# Toby - VoiceActivated Virtual Assistant - TOBY NO LONGER WORKS
 ## Overview
 
-Welcome to Toby, your VoiceActivated Virtual Assistant. Toby is a powerful and versatile virtual assistant that utilizes the Wolfram Alpha API for internet parsing. This AI-driven assistant can answer questions from pop culture to complex mathematics, set alarms, and timers—all with the convenience of voice activation.
+Welcome to Toby, your VoiceActivated Virtual Assistant. Toby is a powerful and versatile virtual assistant that utilizes the Wolfram Alpha API for internet parsing. This AI-driven assistant can answer questions from pop culture to complex mathematics, set alarms, and timers—all with the convenience of voice activation. - 
+## Note:
+Toby was created in 2020, before the real AI boom, meanining it is a lot less powerful than modern AI.
+*Toby was created with java 11 (I think), toby stopped working when we got to java 22 and they whitched a lot of features*
+
 
 ## Features
 
 - **Wolfram Alpha Integration:** Toby leverages the Wolfram Alpha API to provide detailed and accurate answers from the internet.
-- **Voice Activation:** Interact with Toby using voice commands for a hands-free experience.
+- **Voice Activation:** Interact with Toby using voice commands for a hands-free experience. 
 - **Alarms and Timers:** Toby allows you to set alarms and timers effortlessly using voice commands.
 - **Versatile Knowledge Base:** Toby answers questions from a wide range of topics, making it a helpful companion.
-
-## Getting Started
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/lionsgrandson/Toby-Android.git
-    cd toby-virtual-assistant
-    ```
-
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-
-3. Configure API keys:
-    - Obtain a Wolfram Alpha API key and configure it in the settings.
-
-4. Run Toby:
-    ```bash
-    npm start
-    ```
-
 ## Voice Commands
 
 1. **Ask Questions:**
@@ -50,14 +31,9 @@ Welcome to Toby, your VoiceActivated Virtual Assistant. Toby is a powerful and v
    - Trigger: "Hey Toby, what's the weather like today?"
    - Response: Toby provides weather information.
 
-## Important Notes
-
-- Make sure to configure the Wolfram Alpha API key in the settings for accurate internet parsing.
-- Ensure a stable internet connection for Toby to function effectively.
-
 ## Contribution
 
-Contributions are welcome! If you have ideas for improvements or new features, feel free to open an issue or submit a pull request.
+Contributions are welcome! If you have ideas for improvements or new features, feel free to email me and we can work on it.
 
 ## License
 
