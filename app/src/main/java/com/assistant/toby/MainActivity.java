@@ -17,7 +17,6 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.InputType;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
@@ -51,7 +50,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService network = Executors.newSingleThreadExecutor();
     private Future<?> query;
     private int generation;
-    private boolean listening, awaitingNote, foreground, permissionPending;
+    private boolean listening, awaitingNote, foreground, permissionPending, startAfterPermission;
     private long stopwatchStart = -1, stoppedElapsed;
     private final Runnable ticker = new Runnable() {
         @Override public void run() {
@@ -129,6 +128,7 @@ public final class MainActivity extends Activity {
         permissionPending = false;
         if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
             if (foreground) startListening();
+            else startAfterPermission = true;
         } else {
             status.setText("Microphone access was denied. You can type commands, or enable the microphone in Android’s app permissions.");
         }
@@ -367,6 +367,7 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onResume() {
         super.onResume(); foreground = true;
+        if (startAfterPermission) { startAfterPermission = false; startListening(); }
         handler.removeCallbacks(ticker); handler.post(ticker);
     }
     @Override protected void onPause() {
