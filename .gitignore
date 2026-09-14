@@ -12,3 +12,8 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# Local build/signing configuration
+*.jks
+*.keystore
+key.properties

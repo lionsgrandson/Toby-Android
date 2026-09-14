@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Toby</string>
-    <string name="google">www.google.com</string>
+    <string name="tagline">Your little everyday assistant.</string>
+    <string name="ready">Ready when you are</string>
+    <string name="welcome">Hi, I’m Toby. Ask a question, save a note, or set a timer.</string>
+    <string name="command_hint">Type a command or question</string>
+    <string name="send">Send</string>
+    <string name="listen">Speak</string>
+    <string name="stop">Stop listening / speaking</string>
+    <string name="stop_stopwatch">Stop stopwatch</string>
+    <string name="help">Commands</string>
+    <string name="settings">Settings</string>
 </resources>

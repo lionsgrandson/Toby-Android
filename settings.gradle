@@ -1,2 +1,7 @@
-include ':app', ':mylibrary', ':mylibrary2'
-rootProject.name='Toby'
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories { google(); mavenCentral() }
+}
+rootProject.name = 'Toby'
+include ':app'
