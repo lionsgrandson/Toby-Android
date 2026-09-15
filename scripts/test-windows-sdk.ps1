@@ -62,3 +62,5 @@ try {
     $env:PATH = $oldPath
     Remove-Item -LiteralPath $temp -Recurse -Force
 }
+# The deliberately failing missing-SDK subprocess must not become the test suite exit code.
+exit 0
