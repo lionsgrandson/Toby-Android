@@ -1,0 +1,19 @@
+name: Windows build helper
+on:
+  push:
+    branches: [main]
+    paths: [buildapp.cmd, buildapp.ps1, scripts/test-windows-sdk.ps1, .github/workflows/windows-build-helper.yml]
+  pull_request:
+    branches: [main]
+    paths: [buildapp.cmd, buildapp.ps1, scripts/test-windows-sdk.ps1, .github/workflows/windows-build-helper.yml]
+permissions:
+  contents: read
+jobs:
+  sdk-detection:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check SDK discovery and local.properties handling in Windows PowerShell
+        shell: powershell
+        run: ./scripts/test-windows-sdk.ps1

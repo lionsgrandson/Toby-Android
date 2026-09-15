@@ -43,8 +43,10 @@ The old source contained a public App ID. It is no longer used; revoke/rotate it
 
 1. Install Android Studio, Android SDK Platform 35, and Build Tools 35.0.0.
 2. Select **JDK 17** for Gradle in Android Studio. For terminal builds set `JAVA_HOME` to a JDK 17 installation.
-3. Open this project in Android Studio so it creates `local.properties` with `sdk.dir`, or set `ANDROID_HOME` to your SDK directory.
-4. Run `buildapp.cmd`, or `gradlew.bat testDebugUnitTest lintDebug assembleDebug`.
+3. Run `buildapp.cmd`. It detects your SDK from `local.properties`, `ANDROID_HOME`, `ANDROID_SDK_ROOT`, the usual `%LOCALAPPDATA%\Android\Sdk` folder, or `sdkmanager.bat` on PATH. It repairs a stale SDK path while preserving unrelated local properties.
+4. If the SDK is elsewhere, paste its folder when asked. If no SDK is installed, install it in Android Studio > SDK Manager first. Missing Platform 35 and Build-Tools 35.0.0 packages are installed through `sdkmanager` when available; review its license prompt. Otherwise the helper tells you which components to install in Android Studio.
+
+`local.properties` stays local and is ignored by Git. The helper only configures environment variables for the current build, without changing your global Windows settings. To only check SDK detection, run `powershell -NoProfile -ExecutionPolicy Bypass -File .\buildapp.ps1 -CheckOnly`. Direct Gradle builds still work with `gradlew.bat testDebugUnitTest lintDebug assembleDebug` after setup.
 
 On Linux/macOS: `./gradlew testDebugUnitTest lintDebug assembleDebug`.
 
